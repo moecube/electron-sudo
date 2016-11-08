@@ -32,7 +32,7 @@ module.exports.fork = function (modulePath, args = [], options = {}) {
             break;
         case 'win32':
             spawn_command = path.join(process.env['SystemRoot'], 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
-            spawn_args = ['Start-Process', execPath, '.', '-e', elevate, '-Verb', 'runAs', '-Wait', '-WindowStyle', 'Hidden'];
+            spawn_args = ['-Command', `Start-Process -FilePath "${execPath}" -ArgumentList ".","-e","${elevate.replace(/"/g, '\\"')}" -Verb "runAs" -Wait -WindowStyle "Hidden"`];
             break;
     }
     console.log(spawn_command, spawn_args, options);
