@@ -1,3 +1,6 @@
+# IDE
+/.idea/
+
 # MacOS X
 .DS_Store
 .AppleDouble
