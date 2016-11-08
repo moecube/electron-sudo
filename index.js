@@ -31,7 +31,7 @@ module.exports.fork = function (modulePath, args = [], options = {}) {
             spawn_args = ['-e', `do shell script "${execPath} ." with administrator privileges`];
             break;
         case 'win32':
-            spawn_command = path.join(process.env['SystemRoot'], 'WindowsPowerShell', 'v1.0', 'powershell.exe');
+            spawn_command = path.join(process.env['SystemRoot'], 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
             spawn_args = ['Start-Process', execPath, '.', '-Verb', 'runAs', '-Wait', '-WindowStyle', 'Hidden'];
             break;
     }
