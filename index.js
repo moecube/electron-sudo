@@ -18,24 +18,24 @@ module.exports.fork = function (modulePath, args = [], options = {}) {
         ipcPath = path.join(os.tmpdir(), Math.random().toString())
     }
 
-    let elevate = JSON.stringify({
+    let elevate = new Buffer(JSON.stringify({
         method: 'fork',
         arguments: [modulePath, args, options],
         ipc: ipcPath
-    });
+    })).toString('base64');
     let execPath = remote.app.getPath('exe');
     let spawn_command, spawn_args;
     switch (process.platform) {
         case 'darwin':
             spawn_command = 'osascript';
-            spawn_args = ['-e', `do shell script "${execPath} . -e \\\"${elevate.replace(/"/g, '\\\\\\"')}\\\"" with administrator privileges`];
+            spawn_args = ['-e', `do shell script "'${execPath}' . -e ${elevate}" with administrator privileges`];
             break;
         case 'win32':
             spawn_command = path.join(process.env['SystemRoot'], 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
-            spawn_args = ['-Command', `Start-Process -FilePath "${execPath}" -ArgumentList ".","-e","${elevate.replace(/"/g, '\\"')}" -Verb "runAs" -Wait -WindowStyle "Hidden"`];
+            spawn_args = ['-Command', `Start-Process -FilePath "${execPath}" -ArgumentList .,-e,${elevate} -Verb runAs -Wait -WindowStyle Hidden`];
             break;
     }
-    console.log(spawn_command, spawn_args, options);
+
     let child = child_process.spawn(spawn_command, spawn_args, options);
 
     let connection = [];
