@@ -35,7 +35,8 @@ module.exports.fork = function (modulePath, args = [], options = {}) {
             spawn_args = ['-Command', `Start-Process -FilePath "${execPath}" -ArgumentList .,-e,${elevate} -Verb runAs -Wait -WindowStyle Hidden`];
             break;
     }
-
+    options.stdio = 'ignore'
+    
     let child = child_process.spawn(spawn_command, spawn_args, options);
 
     let connection = [];
