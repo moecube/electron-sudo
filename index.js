@@ -6,16 +6,14 @@ const net = require("net");
 const os = require("os");
 const path = require("path");
 const readline = require("readline");
+const uuid = require("uuid");
 function fork(modulePath, args = [], options = {}) {
     if (!options.env) {
         options.env = {};
     }
-    let ipcPath;
+    let ipcPath = path.join(os.tmpdir(), uuid.v1());
     if (process.platform === 'win32') {
-        ipcPath = path.join('\\\\.\\pipe', os.tmpdir(), Math.random().toString());
-    }
-    else {
-        ipcPath = path.join(os.tmpdir(), Math.random().toString());
+        ipcPath = path.join('\\\\.\\pipe', ipcPath);
     }
     let elevate = new Buffer(JSON.stringify({
         method: 'fork',
@@ -67,5 +65,4 @@ function fork(modulePath, args = [], options = {}) {
     return child;
 }
 exports.fork = fork;
-;
 //# sourceMappingURL=index.js.map
