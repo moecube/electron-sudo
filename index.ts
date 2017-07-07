@@ -6,14 +6,14 @@ import { Socket } from 'net';
 import * as os from 'os';
 import * as path from 'path';
 import * as readline from 'readline';
-import * as uuid from 'uuid';
+import * as crypto from 'crypto';
 
 export function fork(modulePath: string, args: string[] = [], options: ForkOptions = {}): ChildProcess {
     if (!options.env) {
         options.env = {};
     }
 
-    let ipcPath = path.join(os.tmpdir(), uuid.v1());
+    let ipcPath = path.join(os.tmpdir(), crypto.randomBytes(8).toString('hex'));
     if (process.platform === 'win32') {
         ipcPath = path.join('\\\\.\\pipe', ipcPath);
     }

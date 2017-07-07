@@ -27,11 +27,8 @@
     "url": "https://github.com/automation-stack/electron-sudo/issues"
   },
   "homepage": "https://github.com/automation-stack/electron-sudo#readme",
-  "dependencies": {
-    "uuid": "^3.0.1"
-  },
   "devDependencies": {
-    "@types/uuid": "^3.0.0",
+    "electron": "^1.6.11",
     "typescript": "^2.3.4"
   }
 }

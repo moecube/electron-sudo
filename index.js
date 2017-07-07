@@ -6,12 +6,12 @@ const net = require("net");
 const os = require("os");
 const path = require("path");
 const readline = require("readline");
-const uuid = require("uuid");
+const crypto = require("crypto");
 function fork(modulePath, args = [], options = {}) {
     if (!options.env) {
         options.env = {};
     }
-    let ipcPath = path.join(os.tmpdir(), uuid.v1());
+    let ipcPath = path.join(os.tmpdir(), crypto.randomBytes(8).toString('hex'));
     if (process.platform === 'win32') {
         ipcPath = path.join('\\\\.\\pipe', ipcPath);
     }
@@ -65,4 +65,3 @@ function fork(modulePath, args = [], options = {}) {
     return child;
 }
 exports.fork = fork;
-//# sourceMappingURL=index.js.map
