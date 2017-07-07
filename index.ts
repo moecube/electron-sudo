@@ -31,7 +31,7 @@ export function fork(modulePath: string, args: string[] = [], options: ForkOptio
             spawn_args = ['-e', `do shell script "'${execPath}' . -e ${elevate}" with administrator privileges`];
             break;
         case 'win32':
-            spawn_command = path.join(process.env['SystemRoot'], 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
+            spawn_command = path.join(process.env['SystemRoot']!, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
             spawn_args = ['-Command',
                 `Start-Process -FilePath "${execPath}" -ArgumentList .,-e,${elevate} -Verb runAs -Wait -WindowStyle Hidden`];
             break;
