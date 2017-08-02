@@ -8,7 +8,8 @@ import * as path from 'path';
 import * as readline from 'readline';
 import * as crypto from 'crypto';
 
-export function fork(modulePath: string, args: string[] = [], options: ForkOptions = {}): ChildProcess {
+// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17017
+export function fork(modulePath: string, args: string[] = [], options: ForkOptions | any = {}): ChildProcess {
     if (!options.env) {
         options.env = {};
     }
@@ -38,19 +39,19 @@ export function fork(modulePath: string, args: string[] = [], options: ForkOptio
         default:
             throw 'unsupported platform';
     }
-    // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17017
-    options.stdio = <any>'ignore';
+    
+    options.stdio = 'ignore';
 
     let child = child_process.spawn(spawn_command, spawn_args, options);
 
     let connection: Socket | IArguments[] = [];
-    // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17018
-    child.send = <any>((message: any, sendHandle?: any, _options?: any, callback?: any) => {
+    child.send = ((message: any, sendHandle?: any, _options?: any, callback?: any) => {
         if (Array.isArray(connection)) {
             connection.push(arguments);
         } else {
             connection!.write(JSON.stringify(message) + os.EOL, callback);
         }
+        return true;
     });
 
 
@@ -61,8 +62,7 @@ export function fork(modulePath: string, args: string[] = [], options: ForkOptio
             child.send.apply(child, message);
         }
         connection = conn;
-        // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17020
-        readline.createInterface({ input: <any>connection }).on('line', (line) => {
+        readline.createInterface({ input: connection }).on('line', (line) => {
             child.emit('message', JSON.parse(line));
         });
 

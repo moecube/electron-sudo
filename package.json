@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/automation-stack/electron-sudo#readme",
   "devDependencies": {
+    "@types/node": "^8.0.19",
     "electron": "^1.6.11",
     "typescript": "^2.3.4"
   }
