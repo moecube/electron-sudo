@@ -7,6 +7,7 @@ const os = require("os");
 const path = require("path");
 const readline = require("readline");
 const crypto = require("crypto");
+// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17017
 function fork(modulePath, args = [], options = {}) {
     if (!options.env) {
         options.env = {};
@@ -35,19 +36,18 @@ function fork(modulePath, args = [], options = {}) {
         default:
             throw 'unsupported platform';
     }
-    // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17017
     options.stdio = 'ignore';
     let child = child_process.spawn(spawn_command, spawn_args, options);
     let connection = [];
-    // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17018
-    child.send = ((message, sendHandle, _options, callback) => {
+    child.send = function (message, sendHandle, _options, callback) {
         if (Array.isArray(connection)) {
             connection.push(arguments);
         }
         else {
             connection.write(JSON.stringify(message) + os.EOL, callback);
         }
-    });
+        return true;
+    };
     let server = net.createServer();
     server.listen(ipcPath);
     server.once('connection', (conn) => {
@@ -55,7 +55,6 @@ function fork(modulePath, args = [], options = {}) {
             child.send.apply(child, message);
         }
         connection = conn;
-        // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17020
         readline.createInterface({ input: connection }).on('line', (line) => {
             child.emit('message', JSON.parse(line));
         });

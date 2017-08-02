@@ -45,14 +45,14 @@ export function fork(modulePath: string, args: string[] = [], options: ForkOptio
     let child = child_process.spawn(spawn_command, spawn_args, options);
 
     let connection: Socket | IArguments[] = [];
-    child.send = ((message: any, sendHandle?: any, _options?: any, callback?: any) => {
+    child.send = function (message: any, sendHandle?: any, _options?: any, callback?: any) {
         if (Array.isArray(connection)) {
             connection.push(arguments);
         } else {
             connection!.write(JSON.stringify(message) + os.EOL, callback);
         }
         return true;
-    });
+    };
 
 
     let server = net.createServer();
