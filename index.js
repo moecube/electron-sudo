@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const child_process = require("child_process");
+const crypto = require("crypto");
 const electron_1 = require("electron");
 const net = require("net");
 const os = require("os");
 const path = require("path");
 const readline = require("readline");
-const crypto = require("crypto");
 // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17017
 function fork(modulePath, args = [], options = {}) {
     if (!options.env) {
@@ -16,12 +16,12 @@ function fork(modulePath, args = [], options = {}) {
     if (process.platform === 'win32') {
         ipcPath = path.join('\\\\.\\pipe', ipcPath);
     }
-    let elevate = new Buffer(JSON.stringify({
+    const elevate = new Buffer(JSON.stringify({
         method: 'fork',
         arguments: [modulePath, args, options],
         ipc: ipcPath
     })).toString('base64');
-    let execPath = electron_1.remote.app.getPath('exe');
+    const execPath = electron_1.remote.app.getPath('exe');
     let spawn_command, spawn_args;
     switch (process.platform) {
         case 'darwin':
@@ -34,10 +34,10 @@ function fork(modulePath, args = [], options = {}) {
                 `Start-Process -FilePath "${execPath}" -ArgumentList .,-e,${elevate} -Verb runAs -Wait -WindowStyle Hidden`];
             break;
         default:
-            throw 'unsupported platform';
+            throw new Error('unsupported platform');
     }
     options.stdio = 'ignore';
-    let child = child_process.spawn(spawn_command, spawn_args, options);
+    const child = child_process.spawn(spawn_command, spawn_args, options);
     let connection = [];
     child.send = function (message, sendHandle, _options, callback) {
         if (Array.isArray(connection)) {
@@ -48,10 +48,10 @@ function fork(modulePath, args = [], options = {}) {
         }
         return true;
     };
-    let server = net.createServer();
+    const server = net.createServer();
     server.listen(ipcPath);
     server.once('connection', (conn) => {
-        for (let message of connection) {
+        for (const message of connection) {
             child.send.apply(child, message);
         }
         connection = conn;
